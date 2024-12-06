@@ -1,6 +1,9 @@
 name: Bump Discord Channel
 
 on:
+  push:  # Trigger when you push a commit
+    branches:
+      - main  # Replace 'main' with your branch name if it's different
   schedule:
     - cron: '0 */2 * * *'  # Every 2 hours
 
