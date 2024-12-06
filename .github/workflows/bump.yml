@@ -5,7 +5,7 @@ on:
     - cron: '0 */2 * * *'  # Every 2 hours
 
 jobs:
-  run-bump:
+  bump:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install selenium undetected-chromedriver
+        pip install selenium webdriver-manager
+
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
 
     - name: Run script
       run: python main.py
