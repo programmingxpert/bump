@@ -1,65 +1,58 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-# Update these with your Discord credentials
+# Replace these with your Discord login credentials and channel URL
 DISCORD_EMAIL = "discordalt5081@gmail.com"
 DISCORD_PASSWORD = "SatyaJojo*1"
-SERVER_URL = "https://discord.com/channels/1231677046019850301/1263420640590037023"  # Replace with your server's channel URL
+CHANNEL_URL = "https://discord.com/channels/1231677046019850301/1263420640590037023"
 
 def main():
-    # Configure Chrome options
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run Chrome in headless mode
-    chrome_options.add_argument("--no-sandbox")  # Required for non-root users
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Avoid memory issues
-    chrome_options.add_argument("--disable-gpu")  # Reduce resource usage
-    chrome_options.add_argument("--disable-extensions")  # Prevent interference by extensions
-
-    # Set up the WebDriver
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=chrome_options
-    )
+    # Setup Chrome WebDriver with options
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     try:
-        # Step 1: Open Discord login page
+        print("Opening Discord...")
         driver.get("https://discord.com/login")
-        print("Discord login page loaded.")
-
-        # Step 2: Log in to Discord
-        email_input = driver.find_element(By.NAME, "email")
-        email_input.send_keys(DISCORD_EMAIL)
-        password_input = driver.find_element(By.NAME, "password")
-        password_input.send_keys(DISCORD_PASSWORD)
-        password_input.send_keys(Keys.RETURN)
-        print("Logged in to Discord.")
-
-        # Wait for login to complete
         time.sleep(5)
 
-        # Step 3: Navigate to the server's channel
-        driver.get(SERVER_URL)
-        print(f"Navigated to server channel: {SERVER_URL}")
+        # Log in to Discord
+        email_box = driver.find_element(By.NAME, "email")
+        email_box.send_keys(DISCORD_EMAIL)
 
-        # Wait for the page to load
-        time.sleep(5)
+        password_box = driver.find_element(By.NAME, "password")
+        password_box.send_keys(DISCORD_PASSWORD)
+        password_box.send_keys(Keys.RETURN)
+        print("Logging in...")
+        time.sleep(10)
 
-        # Step 4: Send the /bump command
+        # Navigate to the channel
+        print(f"Navigating to channel: {CHANNEL_URL}")
+        driver.get(CHANNEL_URL)
+        time.sleep(10)
+
+        # Locate the message box
+        print("Looking for the message box...")
         message_box = driver.find_element(By.CSS_SELECTOR, "div[role='textbox']")
+
+        # Type and send /bump
+        print("Sending /bump...")
+        message_box.click()
         message_box.send_keys("/bump")
-        time.sleep(1)  # Wait before pressing enter
         message_box.send_keys(Keys.RETURN)
-        print("/bump command sent.")
 
-        # Step 5: Confirm the message was sent (Optional)
-        time.sleep(5)
-        print("Automation completed successfully.")
+        print("Bump command sent successfully!")
 
+    except Exception as e:
+        print(f"Error: {e}")
     finally:
         driver.quit()
 
