@@ -1,54 +1,65 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-# Discord login credentials
+# Update these with your Discord credentials
 DISCORD_EMAIL = "discordalt5081@gmail.com"
 DISCORD_PASSWORD = "SatyaJojo*1"
-
-# Channel URL
-CHANNEL_URL = "https://discord.com/channels/1231677046019850301/1263420640590037023"  # Replace with actual server and channel IDs
-
-def login_to_discord(driver):
-    driver.get("https://discord.com/login")
-    time.sleep(5)  # Wait for the login page to load
-
-    email_field = driver.find_element("name", "email")
-    password_field = driver.find_element("name", "password")
-
-    email_field.send_keys(DISCORD_EMAIL)
-    password_field.send_keys(DISCORD_PASSWORD)
-    email_field.send_keys(Keys.RETURN)
-
-    time.sleep(10)  # Allow time for login to complete
-
-def send_bump_command(driver):
-    driver.get(CHANNEL_URL)
-    time.sleep(5)  # Wait for the channel to load
-
-    # Locate the message input box
-    message_box = driver.switch_to.active_element
-    message_box.send_keys("/")
-    time.sleep(1)  # Wait for autocomplete suggestions to appear
-
-    # Type "bump" and select it from the autocomplete menu
-    message_box.send_keys("bump")
-    time.sleep(1)  # Wait for the autocomplete to update
-    message_box.send_keys(Keys.TAB)  # Select the `/bump` command from autocomplete
-    message_box.send_keys(Keys.RETURN)  # Execute the command
-
-    print("Bump command sent successfully.")
-    time.sleep(2)  # Pause briefly to ensure the command executes
+SERVER_URL = "https://discord.com/channels/1231677046019850301/1263420640590037023"  # Replace with your server's channel URL
 
 def main():
-    # Initialize the WebDriver
-    driver = webdriver.Chrome()  # Ensure you have ChromeDriver installed and set up
+    # Configure Chrome options
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Required for non-root users
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Avoid memory issues
+    chrome_options.add_argument("--disable-gpu")  # Reduce resource usage
+    chrome_options.add_argument("--disable-extensions")  # Prevent interference by extensions
+
+    # Set up the WebDriver
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=chrome_options
+    )
+
     try:
-        login_to_discord(driver)
-        while True:
-            send_bump_command(driver)
-            time.sleep(7200)  # Wait 2 hours before bumping again
+        # Step 1: Open Discord login page
+        driver.get("https://discord.com/login")
+        print("Discord login page loaded.")
+
+        # Step 2: Log in to Discord
+        email_input = driver.find_element(By.NAME, "email")
+        email_input.send_keys(DISCORD_EMAIL)
+        password_input = driver.find_element(By.NAME, "password")
+        password_input.send_keys(DISCORD_PASSWORD)
+        password_input.send_keys(Keys.RETURN)
+        print("Logged in to Discord.")
+
+        # Wait for login to complete
+        time.sleep(5)
+
+        # Step 3: Navigate to the server's channel
+        driver.get(SERVER_URL)
+        print(f"Navigated to server channel: {SERVER_URL}")
+
+        # Wait for the page to load
+        time.sleep(5)
+
+        # Step 4: Send the /bump command
+        message_box = driver.find_element(By.CSS_SELECTOR, "div[role='textbox']")
+        message_box.send_keys("/bump")
+        time.sleep(1)  # Wait before pressing enter
+        message_box.send_keys(Keys.RETURN)
+        print("/bump command sent.")
+
+        # Step 5: Confirm the message was sent (Optional)
+        time.sleep(5)
+        print("Automation completed successfully.")
+
     finally:
         driver.quit()
 
