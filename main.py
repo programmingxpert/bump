@@ -9,8 +9,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 # Replace these with your Discord login credentials and channel URL
-DISCORD_EMAIL = "your_email@example.com"
-DISCORD_PASSWORD = "your_password"
+DISCORD_EMAIL = "discordalt5081@gmail.com"
+DISCORD_PASSWORD = "SatyaJojo*1"
 CHANNEL_URL = "https://discord.com/channels/1231677046019850301/1263420640590037023"
 
 def main():
