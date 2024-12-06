@@ -22,4 +22,4 @@ jobs:
         pip install selenium undetected-chromedriver
 
     - name: Run script
-      run: python script_name.py
+      run: python main.py
