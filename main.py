@@ -3,12 +3,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 # Replace these with your Discord login credentials and channel URL
-DISCORD_EMAIL = "discordalt5081@gmail.com"
-DISCORD_PASSWORD = "SatyaJojo*1"
+DISCORD_EMAIL = "your_email@example.com"
+DISCORD_PASSWORD = "your_password"
 CHANNEL_URL = "https://discord.com/channels/1231677046019850301/1263420640590037023"
 
 def main():
@@ -22,22 +24,30 @@ def main():
     try:
         print("Opening Discord...")
         driver.get("https://discord.com/login")
-        time.sleep(5)
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "email"))
+        )
 
         # Log in to Discord
+        print("Logging in...")
         email_box = driver.find_element(By.NAME, "email")
         email_box.send_keys(DISCORD_EMAIL)
 
         password_box = driver.find_element(By.NAME, "password")
         password_box.send_keys(DISCORD_PASSWORD)
         password_box.send_keys(Keys.RETURN)
-        print("Logging in...")
-        time.sleep(10)
+        
+        WebDriverWait(driver, 20).until(
+            EC.url_contains("discord.com/channels")
+        )
+        print("Login successful.")
 
         # Navigate to the channel
         print(f"Navigating to channel: {CHANNEL_URL}")
         driver.get(CHANNEL_URL)
-        time.sleep(10)
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div[role='textbox']"))
+        )
 
         # Locate the message box
         print("Looking for the message box...")
